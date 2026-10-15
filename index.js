@@ -22,19 +22,27 @@ let windDirection = document.querySelector("#windDirection");
 let weatherSummary = document.querySelector("#weatherSummary");
 let weatherIcon = document.querySelector("#weatherIcon");
 let humidityBar = document.querySelector("#humidityBar");
+let currentDate = document.querySelector("#currentDate");
+let loadingOverlay = document.querySelector("#loadingOverlay");
 let nameOfCity;
+
+
 weatherForm.addEventListener('submit', (e) => {
   e.preventDefault();
   nameOfCity = cityInput.value.trim();
+  cityInput.value = "";
   if (!nameOfCity)
     return;
-  searchCity(encodeURIComponent(nameOfCity));
-  foreCast(encodeURIComponent(nameOfCity));
+  setTimeout(() => {
+    searchCity(encodeURIComponent(nameOfCity));
+  }, 5000);
+  loadingOverlay.classList.remove("hidden");
+  // foreCast(encodeURIComponent(nameOfCity));
 })
 
 
 async function searchCity(city) {
-
+  loadingOverlay.classList.add("hidden");
   try {
     let response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=62abd4698f2754971327ba4655a735c3`)
     let data = await response.json();
@@ -72,7 +80,7 @@ function displayWeather(data) {
   windGust.textContent = data.wind.gust ? `${(data.wind.gust * 3.6).toFixed(1)} km/h` : "N/A";
   sunrise.textContent = formatTime(data.sys.sunrise, data.timezone);
   sunset.textContent = formatTime(data.sys.sunset, data.timezone);
-  weatherCondition.textContent = "☁️ Weather data fetched...";
+  weatherCondition.textContent = "☁️ Weather conditions now...";
   weatherIcon.innerHTML = `<img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png" alt="Current weather icon"
               class="h-full w-full object-contain drop-shadow-[0_0_35px_rgba(129,140,248,.28)]">`;
   humidityBar.style.width = `${data.main.humidity}%`;
@@ -98,3 +106,58 @@ function formatTime(unix, offset) {
 //   }
 // }
 
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+    getWeatherbyLocation(lat, lon);
+  },
+  (error) => {
+    console.log("Location access Denied !");
+  }
+);
+
+
+async function getWeatherbyLocation(lat, lon) {
+  try {
+    let response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=62abd4698f2754971327ba4655a735c3`)
+    let data = await response.json();
+    // console.log(data);
+    displayWeather(data);
+  } catch (error) {
+    cityName.textContent = `⚠️ Unable to fetch weather data.`;
+  }
+}
+
+setInterval(function () {
+
+  let date = new Date();
+  let current_date = date.getDate();
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  let current_month = months[date.getMonth()];
+  let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+  let current_day = days[date.getDay()];
+  let current_year = date.getFullYear();
+  currentDate.textContent = `${current_day}, ${current_month} ${current_date}, ${current_year}`
+}, 1000);
