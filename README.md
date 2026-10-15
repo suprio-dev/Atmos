@@ -1,6 +1,6 @@
 # 🌦️ Atmos
 
-### A weather dashboard built with JavaScript.
+### A weather app built with JavaScript.
 
 A sleek, responsive weather dashboard built with HTML, Tailwind CSS, and JavaScript, powered by the OpenWeather API. Get real-time weather updates, explore detailed weather metrics, and automatically sync weather information with your device's current location.
 
@@ -149,7 +149,3 @@ Configure a valid OpenWeather API key in the JavaScript file before running the 
 Built as a hands-on project to strengthen my JavaScript fundamentals and explore API integration, geolocation, asynchronous programming, and responsive web design.
 
 More features may be added as the project evolves.
-
----
-
-*Built with ☁️ and JavaScript by [Suprio Adhikary](https://github.com/suprio-dev).*
